@@ -1,4 +1,4 @@
-service: ${self:custom.saasName}-${self:custom.model}
+service: Push
 
 
 provider:
@@ -10,43 +10,28 @@ provider:
   environment: ${self:custom.environments.${opt:stage, 'DEV'}}
 
 custom:
-  saasName: 'qa'
-  pathToHandler: "compiled/src"
-  pathToJSFile: "src"
+  saasName: 'Push'
+  fcmServerKey: ${ssm:qa-push-fcm-serverKey~true}
   accessKeyId: ${ssm:concise-accessKeyId~true}
   secretAccessKey: ${ssm:concise-secretAccessKey~true}
   region: ${ssm:concise-region~true}
-  model: 'tags'
-  createdAt: 'createdAt'
-  updatedAt: 'updatedAt'
-  indexA: ''
-  indexB: ''
-  indexC: ''
+  pathToHandler: "compiled/src"
+  pathToJSFile: "src"
   environments:
     DEV:
       saasName: ${self:custom.saasName}
       stage: 'DEV'
-      model: ${self:custom.model}
+      fcmServerKey: ${self:custom.fcmServerKey}
       accessKeyId: ${self:custom.accessKeyId}
       secretAccessKey: ${self:custom.secretAccessKey}
       region: ${self:custom.region}
-      createdAt: ${self:custom.createdAt}
-      updatedAt: ${self:custom.updatedAt}
-      indexA: ${self:custom.indexA}
-      indexB: ${self:custom.indexB}
-      indexC: ${self:custom.indexC}
     PROD:
       saasName: ${self:custom.saasName}
       stage: 'PROD'
-      model: ${self:custom.model}
+      fcmServerKey: ${self:custom.fcmServerKey}
       accessKeyId: ${self:custom.accessKeyId}
       secretAccessKey: ${self:custom.secretAccessKey}
       region: ${self:custom.region}
-      createdAt: ${self:custom.createdAt}
-      updatedAt: ${self:custom.updatedAt}
-      indexA: ${self:custom.indexA}
-      indexB: ${self:custom.indexB}
-      indexC: ${self:custom.indexC}
 
 
 
@@ -68,144 +53,16 @@ package:
 
 functions:
 
-  read-all:
-    handler: ${self:custom.pathToHandler}/read-all.handler
+  send:
+    handler: ${self:custom.pathToHandler}/send.handler
     package:
       include:
-      - "${self:custom.pathToJSFile}/read-all.js"
+      - "${self:custom.pathToJSFile}/send.js"
     events:
       - http:
-          path: read-all
-          method: get
+          path: send
+          method: post
           cors: true
-    tags:
-      type: api
-
-
-  read-isExactly:
-    handler: ${self:custom.pathToHandler}/read-isExactly.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isExactly.js"
-    events:
-      - http:
-          path: read-isExactly
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  read-beginsWith:
-    handler: ${self:custom.pathToHandler}/read-beginsWith.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-beginsWith.js"
-    events:
-      - http:
-          path: read-beginsWith
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-
-  read-isBetween:
-    handler: ${self:custom.pathToHandler}/read-isBetween.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isBetween.js"
-    events:
-      - http:
-          path: read-isBetween
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  read-isGreaterOrEqual:
-    handler: ${self:custom.pathToHandler}/read-isGreaterOrEqual.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isGreaterOrEqual.js"
-    events:
-      - http:
-          path: read-isGreaterOrEqual
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  read-isGreaterThan:
-    handler: ${self:custom.pathToHandler}/read-isGreaterThan.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isGreaterThan.js"
-    events:
-      - http:
-          path: read-isGreaterThan
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  read-isLessOrEqual:
-    handler: ${self:custom.pathToHandler}/read-isLessOrEqual.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isLessOrEqual.js"
-    events:
-      - http:
-          path: read-isLessOrEqual
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  read-isLessThan:
-    handler: ${self:custom.pathToHandler}/read-isLessThan.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/read-isLessThan.js"
-    events:
-      - http:
-          path: read-isLessThan
-          method: get
-          cors: true
-    tags:
-      type: api
-
-
-  update:
-    timeout: 180 # optional, in seconds, default is 6
-    handler: ${self:custom.pathToHandler}/update.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/update"
-    events:
-      - http:
-          path: update
-          method: put
-          cors: true
-    tags:
-      type: api
-
-
-  delete:
-    timeout: 180 # optional, in seconds, default is 6
-    handler: ${self:custom.pathToHandler}/delete.handler
-    package:
-      include:
-      - "${self:custom.pathToJSFile}/delete.js"
-    events:
-      - http:
-          path: delete
-          method: delete
-          cors: true
+    timeout: 30 # optional, in seconds, default is 6, if attached to API Gateway limited to 30
     tags:
       type: api
