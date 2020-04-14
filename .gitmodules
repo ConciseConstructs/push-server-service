@@ -7,3 +7,6 @@
 [submodule "lib/interfaces/icrud"]
 	path = lib/interfaces/icrud
 	url = https://github.com/ConciseConstructs/icrud.git
+[submodule "lib/interfaces/push-server-service-interface"]
+	path = lib/interfaces/push-server-service-interface
+	url = https://github.com/ConciseConstructs/push-server-service-interface.git

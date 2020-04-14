@@ -1,31 +1,7 @@
 import { Context, Callback } from 'aws-lambda'
 import { LambdaHandler } from '../lib/classes/lambdahandler/LambdaHandler.class'
-import { IResponse } from '../lib/classes/lambdahandler/Response.class'
+import { IPushSendRequest, IPushSendResponse } from '../lib/interfaces/push-server-service-interface/send.interface'
 import * as FCM from 'fcm-node'
-
-
-export interface IPushSendRequest {
-  to:string|string[]
-  title:string
-  body:string
-  image?:string
-  collapseTitle?:string
-  name?:string
-  data?:{
-    [key:string]: string
-  }
-}
-
-
-export interface IPushSendResponse extends IResponse {
-  details:{
-    multicast_id:number,
-    success:number,
-    failure:number,
-    canonical_ids:number,
-    results:{ message_id:string }[]
-  }
-}
 
 
 export function handler(incomingRequest:IPushSendRequest, context:Context, callback:Callback) {
