@@ -17,7 +17,7 @@ provider:
 
 custom:
   saasName: 'Push'
-  fcmServerKey: ${ssm:qa-push-fcm-serverKey~true}
+  fcmServerKey: ${ssm:iqqa-push-fcm-serverKey~true}
   accessKeyId: ${ssm:concise-accessKeyId~true}
   secretAccessKey: ${ssm:concise-secretAccessKey~true}
   region: ${ssm:concise-region~true}
@@ -70,6 +70,8 @@ functions:
       include:
       - "${self:custom.pathToJSFile}/send.js"
     events:
+      - schedule:
+          rate: rate(5 minutes)
       - http:
           path: send
           method: post

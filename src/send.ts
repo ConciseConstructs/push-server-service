@@ -48,57 +48,65 @@ export function handler(incomingRequest:IPushSendRequest, context:Context, callb
 
 
     protected performActions() {
-      this.createPushNotification()
-      this.assignRecipients()
-      this.assignData()
-      this.assignCollapseTitle()
-      this.sendPushNotification()
+      if (!this.request.to) this.hasSucceeded('Keeping warm...')
+      else this.proceed()
     }
 
 
 
 
-        private createPushNotification() {
-          this.pushObject = {
-            notification: {
-              title: this.request.title,
-              body: this.request.body
+        private proceed() {
+          this.createPushNotification()
+          this.assignRecipients()
+          this.assignData()
+          this.assignCollapseTitle()
+          this.sendPushNotification()
+        }
+
+
+
+
+            private createPushNotification() {
+              this.pushObject = {
+                notification: {
+                  title: this.request.title,
+                  body: this.request.body
+                }
+              }
             }
-          }
-        }
 
 
 
 
-        private assignRecipients() {
-          if (this.request.to.constructor === Array) this.pushObject.registration_ids = this.request.to
-          else this.pushObject.to = this.request.to
-        }
+            private assignRecipients() {
+              if (this.request.to.constructor === Array) this.pushObject.registration_ids = this.request.to
+              else this.pushObject.to = this.request.to
+            }
 
 
 
 
-        private assignData() {
-          if (this.request.data) this.pushObject.data = this.request.data
-        }
+            private assignData() {
+              if (this.request.data) this.pushObject.data = this.request.data
+            }
 
 
 
 
-        private assignCollapseTitle() {
-          if (this.request.collapseTitle) this.pushObject.collapse_key = this.request.collapseTitle
-        }
+            private assignCollapseTitle() {
+              if (this.request.collapseTitle) this.pushObject.collapse_key = this.request.collapseTitle
+            }
 
 
 
 
-        private sendPushNotification() {
-          this.fcm = new FCM(process.env.fcmServerKey)
-          this.fcm.send(this.pushObject, (failure, success)=> {
-            if (failure) this.hasFailed(failure)
-            else this.hasSucceeded(success)
-          })
-        }
+            private sendPushNotification() {
+              this.fcm = new FCM(process.env.fcmServerKey)
+              this.fcm.send(this.pushObject, (failure, success)=> {
+                if (success) this.hasSucceeded(success)
+                else this.hasFailed(failure)
+              })
+            }
 
 
   } // End Handler Class ---------
