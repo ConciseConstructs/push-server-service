@@ -70,8 +70,6 @@ functions:
       include:
       - "${self:custom.pathToJSFile}/send.js"
     events:
-      - schedule:
-          rate: rate(5 minutes)
       - http:
           path: send
           method: post
